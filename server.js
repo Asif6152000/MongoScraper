@@ -13,10 +13,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 
-var PORT = 3000;
+var PORT = process.env.PORT || 3000;
 var db = require("./models");
-mongoose.connect("mongodb://localhost/Articles_DB");
-
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/Articles_DB";
+mongoose.Promise = Promise;
+mongoose.connect(MONGODB_URI);
 
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
