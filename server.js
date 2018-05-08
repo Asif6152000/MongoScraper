@@ -6,15 +6,22 @@ var request = require("request");
 var express = require('express');
 var bodyParser = require('body-parser');
 var exphbs = require("express-handlebars")
+var mongoose = require("mongoose");
 var app = express();
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
+
 var PORT = 3000;
+var db = require("./models");
+mongoose.connect("mongodb://localhost/Articles_DB");
+
 
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
+app.use(express.static("assets"));
+
 
 
 
@@ -51,7 +58,7 @@ app.get('/', function(req, res){
             
             // console.log(title, link);
         });
-        var data = {results};
+        var data = {results: results};
         res.render('index', data);
         // console.log(results);
     });
@@ -59,7 +66,27 @@ app.get('/', function(req, res){
 
 //we need to create post route to send users saved articles
 //we also need to create our mongodb database and set up out mongoose config
-app.post('/save-articles')
+app.post('/api/save-article', function(req, res ){
+    db.savedArticles.create(req.body)
+    .then(function(savedArticle){
+        console.log(savedArticle); 
+        res.json(savedArticle); 
+    
+    }  ) 
+    .catch(function(err) {
+        console.log(err); 
+        res.json(err); 
+    } )
+} )
+
+app.get('/saved_articles', function(req, res) {
+    db.savedArticles.find()
+    .then(function(savedArticles){
+        console.log(savedArticles); 
+        var data = {saved_articles: savedArticles}
+        res.render('savedArticles', data); 
+    } )
+} )
 
 app.listen(PORT, function(){
     console.log('Listening on ', PORT);

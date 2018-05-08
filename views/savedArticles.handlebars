@@ -1,0 +1,7 @@
+<ul>
+    {{#each saved_articles}}
+    <li><a href={{link}} target='_blank'>{{title}}</a></li>
+    <button id="deleteArticle"  data-id="{{_id}}"> Delete Article</button>
+    <button id="addNote"  data-id="{{_id}}"> Add Note</button>
+    {{/each}}
+</ul> 
